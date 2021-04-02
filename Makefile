@@ -1,4 +1,4 @@
-SOURCE = Chunk.cpp ChunkProbe.cpp SavestateProbe.cpp main.cpp
+SOURCE = SavestateProbe.cpp main.cpp
 OBJECTS = $(SOURCE:%.cpp=%.o)
 BINARY = testcase.js
 GARBAGE = $(OBJECTS) $(BINARY:%.js=%.wasm)
