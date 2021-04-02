@@ -1,0 +1,4 @@
+*.o
+*.js
+*.wasm
+c_cpp_properties.json
