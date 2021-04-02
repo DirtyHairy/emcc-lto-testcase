@@ -19,15 +19,6 @@ class Savestate {
     template <typename T>
     bool Save(T& t);
 
-    Chunk* GetChunk(ChunkType type);
-
-    void NotifyError();
-
-    void* GetBuffer() { return buffer.get(); }
-    size_t GetSize() const { return size; }
-
-    void Reset();
-
    private:
     template <typename T>
     bool AllocateBuffer(T& t);
@@ -57,13 +48,6 @@ bool Savestate::Save(T& target) {
         error = true;
         return false;
     }
-
-    error = false;
-    for (auto& [chunkType, chunk] : chunkMap) chunk.Reset();
-
-    target.Save(*this);
-
-    for (auto& [chunkType, chunk] : chunkMap) error = error || chunk.HasError();
 
     return !error;
 }
