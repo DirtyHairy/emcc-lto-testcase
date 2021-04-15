@@ -1,21 +1,26 @@
-SOURCE = SavestateProbe.cpp main.cpp
-OBJECTS = $(SOURCE:%.cpp=%.o)
-BINARY = testcase.js
-GARBAGE = $(OBJECTS) $(BINARY:%.js=%.wasm)
+LLVM_PREFIX ?= ~/git/llvm-project/prefix/bin
+LLVM_SYSROOT ?= /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
 
-CFLAGS = -Werror -Wextra -Wall -Wno-unused-parameter -Wno-pragma-pack -O3 -flto -fno-rtti -std=c++17 -fno-exceptions -g4
-LDFLAGS = -O3 -Wno-version-check -flto -g4
-CC = emcc
+CXXFLAGS = -O3 -flto -fno-rtti -fno-exceptions -I./include
+LDFLAGS = -O3 -flto
 
-all: $(BINARY)
+OBJECTS_LIBC = algorithm.o new.o
+OBJECTS = test.o
 
-$(BINARY): $(OBJECTS)
-	$(CC) $(LDFLAGS) -o $@ $^
+BINARY = test
 
-%.o : %.cpp
-	$(CC) $(CFLAGS) -c -o $@ $<
+bin: $(BINARY)
+
+$(OBJECTS) : %.o : %.cpp
+	$(LLVM_PREFIX)/clang++ $(CXXFLAGS) -isysroot $(LLVM_SYSROOT) -c $<
+
+$(OBJECTS_LIBC) : %.o : src/%.cpp
+	$(LLVM_PREFIX)/clang++ $(CXXFLAGS) -isysroot $(LLVM_SYSROOT) -c $<
+
+$(BINARY) : $(OBJECTS) $(OBJECTS_LIBC)
+	$(LLVM_PREFIX)/clang $(LDFLAGS) -isysroot $(LLVM_SYSROOT) -o $@ $^
 
 clean:
-	rm -f $(GARBAGE)
+	-rm -f $(OBJECTS) $(OBJECTS_LIBC) $(BIN)
 
-.PHONY: clean all
+.PHONY: clean bin
