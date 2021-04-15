@@ -1,7 +1,7 @@
 LLVM_PREFIX ?= ~/git/llvm-project/prefix/bin
 LLVM_SYSROOT ?= /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk
 
-CXXFLAGS = -O3 -flto -fno-rtti -fno-exceptions -I./include
+CXXFLAGS = -O3 -flto -fno-rtti -fno-exceptions -I./include -nostdinc++
 LDFLAGS = -O3 -flto
 
 OBJECTS_LIBC = algorithm.o new.o
